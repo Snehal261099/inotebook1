@@ -1,8 +1,9 @@
 const connectToMongoose = require("./db");
 connectToMongoose();
-
-const express = require("express");
-const app = express();
+const express = require('express')
+const cors = require('cors')
+const app = express()
+app.use(cors())
 const port = 5000;
 
 //for reading the data from the thunderstrom
