@@ -6,7 +6,7 @@ import { useEffect } from "react";
 
 export const Notes = () => {
   const context = useContext(noteContext);
-  const { notes, getNote } = context;
+  const { notes, getNote, editNote } = context;
   useEffect(() => {
     getNote();
   }, []);
@@ -20,15 +20,17 @@ export const Notes = () => {
   const updateNote = (currentNote) => {
     ref.current.click();
     setnote({
+      id: currentNote._id,
       etitle: currentNote.title,
       edescription: currentNote.description,
       etag: currentNote.tag,
     });
   };
   const ref = useRef(null);
+  const refClosed = useRef(null);
   const handleClick = (e) => {
-    console.log("Updating",note)
-    e.preventDefault();
+    editNote(note.id, note.etitle, note.edescription, note.tag);
+    refClosed.current.click();
   };
   const onChange = (e) => {
     setnote({ ...note, [e.target.name]: e.target.value });
@@ -77,10 +79,11 @@ export const Notes = () => {
                     id="etitle"
                     name="etitle"
                     className="form-control"
-                    id="exampleInputEmail1"
                     aria-describedby="emailHelp"
                     value={note.etitle}
                     onChange={onChange}
+                    required
+                    minLength={5}
                   />
                 </div>
                 <div className="mb-3">
@@ -92,9 +95,10 @@ export const Notes = () => {
                     id="edescription"
                     name="edescription"
                     className="form-control"
-                    id="exampleInputPassword1"
                     value={note.edescription}
                     onChange={onChange}
+                    required
+                    minLength={5}
                   />
                 </div>
                 <div className="mb-3">
@@ -106,22 +110,31 @@ export const Notes = () => {
                     id="etag"
                     name="etag"
                     className="form-control"
-                    id="exampleInputPassword1"
                     value={note.etag}
                     onChange={onChange}
+                    required
+                    minLength={5}
                   />
                 </div>
               </form>
             </div>
             <div className="modal-footer">
               <button
+                ref={refClosed}
                 type="button"
                 className="btn btn-secondary"
                 data-bs-dismiss="modal"
               >
                 Close
               </button>
-              <button type="button" onClick={handleClick} className="btn btn-primary">
+              <button
+                type="button"
+                onClick={handleClick}
+                className="btn btn-primary"
+                disabled={
+                  note.etitle.length < 5 || note.edescription.elength < 5
+                }
+              >
                 Update Note
               </button>
             </div>
@@ -129,8 +142,11 @@ export const Notes = () => {
         </div>
       </div>
 
-      <div className="row my-3">
+      <div className=" row my-3">
         <h1>Your Notes</h1>
+        <div className="container mx-1">
+          {notes.length === 0 && `No Notes To display`}
+        </div>
         {notes.map((note) => {
           return (
             <NoteItem key={note._id} updateNote={updateNote} note={note} />
