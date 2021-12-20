@@ -1,21 +1,21 @@
-import React, { useContext,useState }from "react";
+import React, { useContext, useState } from "react";
 import NoteContext from "../context/notes/noteContext";
 const Addnote = () => {
   const context = useContext(NoteContext);
-  const { addnote } = context;
+  const { addNote } = context;
 
-  const [ note, setnote ] = useState({
-        title: " ",
-        description:" ",
-        tag:""
-    })
-    const handleClick = (e) => {
-        e.preventDefault();
-        addnote(note.title,note.description,note.tag)
-     };
-    const onChange = (e) => {
-        setnote({...note,[e.target.name]:e.target.value})
-    }
+  const [note, setnote] = useState({
+    title: " ",
+    description: " ",
+    tag: "default",
+  });
+  const handleClick = (e) => {
+    e.preventDefault();
+    addNote(note.title, note.description, note.tag);
+  };
+  const onChange = (e) => {
+    setnote({ ...note, [e.target.name]: e.target.value });
+  };
   return (
     <div>
       <form>
