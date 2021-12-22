@@ -6,12 +6,12 @@ const salt = bcrypt.genSaltSync(10);
 const hash = bcrypt.hashSync("B4c0//", salt);
 var jwt = require("jsonwebtoken");
 const JWT_SECRET = "imgoodforme";
-const fetchuser=require("../middleware/fetchuser")
+const fetchuser = require("../middleware/fetchuser");
 
 const { body, validationResult } = require("express-validator");
 
 //ROUTE 1:create a user:Post "/api/auth/createuser".Dosen't require auth
-
+let success = false;
 router.post(
   "/createuser",
   [
@@ -45,8 +45,8 @@ router.post(
       },
     };
     const autoToken = jwt.sign(data, JWT_SECRET);
-    // console.log(jwtData);
-    res.json({ autoToken });
+    success = true;
+    res.json({ success, autoToken });
     //check whether the user with email exists already
   }
 );
@@ -85,7 +85,8 @@ router.post(
         },
       };
       const autoToken = jwt.sign(data, JWT_SECRET);
-      res.json({ autoToken });
+      success = true;
+      res.json({ success, autoToken });
     } catch (error) {
       console.error(error.message);
       res.status(400).send("Internal server error");
@@ -95,18 +96,15 @@ router.post(
 
 //ROUTE 3:get logged in user detials :Post "/api/auth/getuser"
 
-router.post(
-  "/getuser",fetchuser,
-  async (req, res) => {
-    try {
-      userId = req.user.id;
-      const user = await User.findById( userId).select("-password");
-      res.send(user)
-    } catch (error) {
-      console.error(error.message);
-      res.status(400).send("Internal server error");
-    }
+router.post("/getuser", fetchuser, async (req, res) => {
+  try {
+    userId = req.user.id;
+    const user = await User.findById(userId).select("-password");
+    res.send(user);
+  } catch (error) {
+    console.error(error.message);
+    res.status(400).send("Internal server error");
   }
-);
+});
 
 module.exports = router;
